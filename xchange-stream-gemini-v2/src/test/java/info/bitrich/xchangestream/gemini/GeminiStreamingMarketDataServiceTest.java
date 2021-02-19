@@ -15,7 +15,7 @@ import static org.junit.Assert.assertEquals;
 import static org.knowm.xchange.currency.CurrencyPair.LTC_USD;
 import static org.mockito.Mockito.when;
 
-@Ignore
+
 public class GeminiStreamingMarketDataServiceTest {
 
     @InjectMocks

@@ -12,15 +12,18 @@ wget https://archive.apache.org/dist/maven/maven-3/3.6.3/binaries/apache-maven-3
 unzip -qq apache-maven-3.6.3-bin.zip;
 export M2_HOME=$PWD/apache-maven-3.6.3;
 export PATH=$M2_HOME/bin:$PATH;
+mvn compile
+mvn test"
 
-if [ ${TRAVIS_PULL_REQUEST} = 'false' ];
-then
-    mvn -v;
-    mvn clean deploy --no-transfer-progress --batch-mode --settings etc/settings.xml -Dfmt.skip=true;
-else
-    mvn -v;
-    mvn clean verify --no-transfer-progress --batch-mode --settings etc/settings.xml -Dmaven.javadoc.skip=true -Dfmt.skip=true;
-fi"
+
+#"if [ ${TRAVIS_PULL_REQUEST} = 'false' ];
+#then
+#    mvn -v;
+#    mvn clean deploy --no-transfer-progress --batch-mode --settings etc/settings.xml -Dfmt.skip=true;
+#else
+#    mvn -v;
+#    mvn clean verify --no-transfer-progress --batch-mode --settings etc/settings.xml -Dmaven.javadoc.skip=true -Dfmt.skip=true;
+#fi"
 
 dist: trusty
 
