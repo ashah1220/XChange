@@ -3,12 +3,14 @@ package info.bitrich.xchangestream.gemini;
 import info.bitrich.xchangestream.core.ProductSubscription;
 import info.bitrich.xchangestream.core.StreamingExchangeFactory;
 import io.reactivex.disposables.Disposable;
+import org.junit.Ignore;
 import org.knowm.xchange.ExchangeSpecification;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /** Created by Lukas Zaoralek on 15.11.17. */
+@Ignore
 public class GeminiManualExample {
     private static final Logger LOG = LoggerFactory.getLogger(GeminiManualExample.class);
 
