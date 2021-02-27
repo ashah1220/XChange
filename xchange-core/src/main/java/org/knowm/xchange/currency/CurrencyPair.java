@@ -432,6 +432,8 @@ public class CurrencyPair extends Instrument implements Comparable<CurrencyPair>
     this.counter = Currency.getInstance(counter);
   }
 
+
+
   @JsonValue
   @Override
   public String toString() {

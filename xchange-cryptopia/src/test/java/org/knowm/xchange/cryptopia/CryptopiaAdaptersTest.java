@@ -6,19 +6,23 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.math.MathContext;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
+
+import org.junit.Assert;
 import org.junit.Test;
+import org.knowm.xchange.Exchange;
+import org.knowm.xchange.ExchangeFactory;
 import org.knowm.xchange.cryptopia.dto.CryptopiaBaseResponse;
 import org.knowm.xchange.cryptopia.dto.CryptopiaBaseResponseCryptopiaCurrency;
 import org.knowm.xchange.cryptopia.dto.CryptopiaBaseResponseCryptopiaMarketHistory;
 import org.knowm.xchange.cryptopia.dto.CryptopiaBaseResponseCryptopiaOrderBook;
 import org.knowm.xchange.cryptopia.dto.CryptopiaBaseResponseCryptopiaTicker;
 import org.knowm.xchange.cryptopia.dto.CryptopiaBaseResponseCryptopiaTradePair;
-import org.knowm.xchange.cryptopia.dto.marketdata.CryptopiaCurrency;
-import org.knowm.xchange.cryptopia.dto.marketdata.CryptopiaMarketHistory;
-import org.knowm.xchange.cryptopia.dto.marketdata.CryptopiaOrderBook;
-import org.knowm.xchange.cryptopia.dto.marketdata.CryptopiaTicker;
-import org.knowm.xchange.cryptopia.dto.marketdata.CryptopiaTradePair;
+import org.knowm.xchange.cryptopia.dto.marketdata.*;
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.Order;
@@ -26,6 +30,8 @@ import org.knowm.xchange.dto.marketdata.OrderBook;
 import org.knowm.xchange.dto.marketdata.Ticker;
 import org.knowm.xchange.dto.marketdata.Trades;
 import org.knowm.xchange.dto.meta.ExchangeMetaData;
+import org.knowm.xchange.dto.trade.LimitOrder;
+import org.knowm.xchange.service.marketdata.MarketDataService;
 
 /** Tests the CryptopiaAdapters class */
 public class CryptopiaAdaptersTest {
@@ -54,6 +60,27 @@ public class CryptopiaAdaptersTest {
     assertThat(orderBook.getBids().get(0).getOriginalAmount())
         .isEqualTo(new BigDecimal("1.27390320"));
     assertThat(orderBook.getBids().get(0).getCurrencyPair()).isEqualTo(CurrencyPair.ETH_BTC);
+  }
+
+  @Test
+  public void testOrderBookAdapterNew() throws IOException {
+    // Read in the JSON from the example resources
+    InputStream is =
+            CryptopiaAdaptersTest.class.getResourceAsStream(
+                    "/org/knowm/xchange/cryptopia/dto/marketdata/example-full-depth-data-diff-time.json");
+
+    // Use Jackson to parse it
+    ObjectMapper mapper = new ObjectMapper();
+    CryptopiaBaseResponse<CryptopiaOrderBook> cryptopiaOrderBook =
+            mapper.readValue(is, CryptopiaBaseResponseCryptopiaOrderBook.class);
+    is.close();
+
+    OrderBook ob = CryptopiaAdaptersCopy.adaptOrderBook(cryptopiaOrderBook.getData(), CurrencyPair.ETH_BTC);
+    Assert.assertEquals("Tue Sep 10 05:31:44 PDT 2013", ob.getTimeStamp().toString());
+
+    List<LimitOrder> list = ob.getBids();
+    Collections.sort(list, (o1, o2) -> o2.getOriginalAmount().compareTo(o1.getOriginalAmount()));
+    Assert.assertEquals("220780.35551339", list.get(0).getOriginalAmount().toString());
   }
 
   @Test
